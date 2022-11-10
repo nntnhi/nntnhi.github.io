@@ -968,6 +968,18 @@ var gameData = [
 	},
 	{
 		game: "Path To Nowhere",
+		server: "NA",
+		timezone: "Etc/GMT+7",
+		dailyReset: "05:00"
+	},
+	{
+		game: "Path To Nowhere",
+		server: "EU",
+		timezone: "Etc/GMT-2",
+		dailyReset: "05:00"
+	},
+	{
+		game: "Path To Nowhere",
 		server: "SEA",
 		timezone: "Etc/GMT-7",
 		dailyReset: "05:00"
