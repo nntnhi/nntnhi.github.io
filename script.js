@@ -1,4 +1,23 @@
 // Initialise list of filtered/hidden games using gameData.
+function deepCopy(src) {
+	let target = Array.isArray(src) ? [] : {};
+	for (let key in src) {
+	  let v = src[key];
+	  if (v) {
+		if (typeof v === "object") {
+		  target[key] = deepCopy(v);
+		} else {
+		  target[key] = v;
+		}
+	  } else {
+		target[key] = v;
+	  }
+	}
+  
+	return target;
+  }
+  
+var gameDataBackup = deepCopy(gameData);
 var gameFilter = [];
 
 for (let i = 0; i < gameData.length; i++) {
@@ -9,6 +28,12 @@ for (let i = 0; i < gameData.length; i++) {
 			shown: "true"
 		}
 	);
+}
+var checkSelectAll = false;
+var selectAll = true;
+if (localStorage.getItem('selectAll') == "false") {
+	selectAll = false;
+	document.getElementById("selectAll").checked = false;
 }
 
 // Check saved settings.
@@ -62,6 +87,7 @@ if (localStorage.getItem('darkThemeSwitch') == "true") {
 	document.body.classList.add("dark");
 	document.getElementById("darkThemeSwitch").checked = true;
 }
+
 
 // Hide game containers.
 if (localStorage.getItem('gameFilterList') != null) {
@@ -150,6 +176,7 @@ for (let i = 0; i < gameData.length; i++) {
 
 	// Calculate time left until daily reset.
 	let timeRemaining = moment.preciseDiff(now, localResetTime, true);
+	
 	// Display seconds if the setting is on.
 	if (showSeconds) {
 		timeRemaining = timeRemaining.hours + " hours " + timeRemaining.minutes + " minutes " + timeRemaining.seconds + " seconds "
@@ -159,23 +186,35 @@ for (let i = 0; i < gameData.length; i++) {
 
 	// Store.
 	// Server timezone todaysDailyReset is stored for printing below.
+	var timetoCompare = parseInt((localResetTime-now)/1000/60/60);
+	if (timetoCompare >= 24)
+	{
+		timetoCompare = timetoCompare - 24 + 10;
+	}
+	else {
+		timetoCompare = timetoCompare + 10;
+	}
 	gameDataConverted.push(
 		{
 			dailyReset: localResetTime,
 			serverTime: currentServerTime,
 			timeToReset: timeRemaining,
-			todaysServerReset: todaysDailyReset
+			todaysServerReset: todaysDailyReset,
+			timetoCompare: timetoCompare,
+			game: gameData[i].game,
+			server: gameData[i].server,
 		}
 	);
 }
-
+var gameDataConvertedBackup = deepCopy(gameDataConverted);
 // Loop print the results as divs into #resultsContainer.
 for (let i = 0; i < gameData.length; i++) {
 	const gameCont = document.getElementById("resultsContainer").getElementsByClassName("gameContainer")[i], 
 	gameHead = gameCont.getElementsByClassName("gameHeader")[0], 
 	gameBody = gameCont.getElementsByClassName("gameTimes")[0];
-
-	gameHead.insertAdjacentHTML("beforeend", "<h4>" + gameData[i].server + "</h4>");
+	var testing = document.querySelectorAll (".gameContainer");
+	testing[i].setAttribute("data-sort", gameDataConverted[i].timetoCompare)
+	gameHead.insertAdjacentHTML("beforeend", "<h4>" + gameDataConverted[i].server + "</h4>");
 	gameBody.getElementsByTagName("p")[0].insertAdjacentHTML("afterend", "<p>" + gameDataConverted[i].dailyReset.format(resetTimeFormat) + "</p>");
 	gameBody.getElementsByTagName("p")[2].insertAdjacentHTML("afterend", "<p>" + gameDataConverted[i].timeToReset + "</p>");
 	// Add prefix for timezone abbreviation if it's an offset.
@@ -234,6 +273,7 @@ function timeCalc() {
 	// Refresh time.
 	now = moment();
 
+	
 	// Refresh converted times.
 	for (let i = 0; i < gameData.length; i++) {
 		let gameTimezone = gameData[i].timezone, 
@@ -265,6 +305,15 @@ function timeCalc() {
 
 		// Calculate time left until daily reset.
 		let timeRemaining = moment.preciseDiff(now, localResetTime, true);
+
+		var timetoCompare = parseInt((localResetTime-now)/1000/60/60);
+		if (timetoCompare >= 24)
+		{
+			timetoCompare = timetoCompare - 24 + 10;
+		}
+		else {
+			timetoCompare = timetoCompare + 10;
+		}
 		// Display seconds if the setting is on.
 		if (showSeconds) {
 			timeRemaining = timeRemaining.hours + " hours " + timeRemaining.minutes + " minutes " + timeRemaining.seconds + " seconds "
@@ -277,15 +326,18 @@ function timeCalc() {
 		gameDataConverted[i].serverTime = currentServerTime;
 		gameDataConverted[i].timeToReset = timeRemaining;
 		gameDataConverted[i].todaysServerReset = todaysDailyReset;
+		gameDataConverted[i].timetoCompare = timetoCompare;
+		
 	}
-
+	
 	// Print refreshed values.
 	document.getElementById("currentLocalTime").textContent = now.format(timeFormat);
 	document.getElementById("currentLocalDate").textContent = now.format("dddd, Do MMMM, YYYY");
 	for (let i = 0; i < gameData.length; i++) {
 		const gameCont = document.getElementById("resultsContainer").getElementsByClassName("gameContainer")[i], 
 		gameBody = gameCont.getElementsByClassName("gameTimes")[0];
-
+		var testing = document.querySelectorAll (".gameContainer");
+		testing[i].setAttribute("data-sort", gameDataConverted[i].timetoCompare)
 		gameBody.getElementsByTagName("p")[1].textContent = gameDataConverted[i].dailyReset.format(resetTimeFormat);
 		gameBody.getElementsByTagName("p")[3].textContent = gameDataConverted[i].timeToReset;
 		// Add prefix for timezone abbreviation if it's an offset.
@@ -301,6 +353,7 @@ function timeCalc() {
 			gameBody.getElementsByTagName("p")[7].insertAdjacentHTML("beforeend", "<br>" + gameDataConverted[i].serverTime.format("Do MMMM"));
 		}
 	}
+	
 }
 
 function toggleMenu() {
@@ -340,7 +393,8 @@ function searchFilter () {
 			const gameCont = document.getElementById("resultsContainer").getElementsByClassName("gameContainer")[i], 
 			gameHead = gameCont.getElementsByClassName("gameHeader")[0], 
 			gameName = gameHead.getElementsByTagName("h3")[0].textContent.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
-	
+			var testing = document.querySelectorAll (".gameContainer");
+			testing[i].setAttribute("data-sort", gameDataConverted[i].timetoCompare)
 			if (!gameName.includes(searchTerm)) {
 				// Hide.
 				gameCont.style.display = "none";
@@ -499,7 +553,74 @@ function menuChildrenToggle(dropArrow) {
 	document.getElementById("gameFilterSettings").style.height = gamesMenuSectionHeight + "px";
 }
 
+$('#selectAll').click(function() {
+	checkSelectAll = true;
+	undoSortDivs();
+	if (this.checked) {
+		$('#gameFilterSettings :checkbox').each(function() {
+			if (this.checked == false) {
+				this.addEventListener('change', function() {})
+				this.checked = true;
+				this.dispatchEvent(new Event('change'));
+			}
+		});
+	} else {
+	   $('#gameFilterSettings :checkbox').each(function() {
+			if (this.checked == true) {
+				this.addEventListener('change', function() {})
+				this.checked = false;
+				this.dispatchEvent(new Event('change'));
+			}
+		});
+	}
+	localStorage.setItem("selectAll", this.checked)
+	checkSelectAll = false;
+ });
+
+ const gameContainerbackup = $('.gameContainer').clone();
+
+// Sort on time diff for current timezone
+
+function getSorted(selector, attrName) {
+	return $($(selector).toArray().sort(function(a, b){
+		var aVal = parseInt(a.getAttribute(attrName)),
+			bVal = parseInt(b.getAttribute(attrName));
+		return aVal - bVal;
+	}));}
+
+// Replace the sorted divs to container
+
+function sortDivs() {
+	var	sorted_items = getSorted('.gameContainer', 'data-sort').clone();
+	$('#resultsContainer').html(sorted_items);
+	$('#sortByTime').addClass("selected");
+	$('#sortByName').removeClass("selected");
+	var order = [];
+	var h3element = document.getElementsByTagName("h3");
+	var h4element = document.getElementsByTagName("h4");
+
+	for (let i = 0; i < h3element.length; i++) {
+		order.push(h3element[i].innerHTML.replace('Pokémon','Pokemon')+' '+(h4element[i].innerHTML.substring(0,2)))
+	}
+	//console.log(order)
+	gameData.sort((a, b) => order.indexOf(a.game+' '+a.server.substring(0,2)) - order.indexOf(b.game+' '+b.server.substring(0,2)));
+	gameDataConverted.sort((a, b) => order.indexOf(a.game+' '+a.server.substring(0,2)) - order.indexOf(b.game+' '+b.server.substring(0,2)));
+}
+
+function undoSortDivs() {
+	$('#sortByName').addClass("selected");
+	$('#sortByTime').removeClass("selected");
+	gameData = deepCopy(gameDataBackup);
+	gameDataConverted = deepCopy(gameDataConvertedBackup);
+	setRefresh();
+	$('#resultsContainer').html(gameContainerbackup);
+}
+
 function toggleGameServerHide(toggle, child) {
+	// if (checkSelectAll == false) {
+	// 	undoSortDivs();
+	// };
+	
 	// Find the server's position in gameData.
 	let position = 0;
 	for (; position < gameData.length; position++) {

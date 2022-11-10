@@ -1,4 +1,4 @@
-const gameData = [
+var gameData = [
 	{
 		game: "AFK Arena",
 		server: "Global",
@@ -539,6 +539,18 @@ const gameData = [
 		dailyReset: "05:00"
 	},
 	{
+		game: "Goddess of Victory: NIKKE",
+		server: "Global",
+		timezone: "Etc/GMT-8",
+		dailyReset: "04:00"
+	},
+	{
+		game: "Goddess of Victory: NIKKE",
+		server: "SEA",
+		timezone: "Etc/GMT-8",
+		dailyReset: "04:00"
+	},
+	{
 		game: "Granblue Fantasy",
 		server: "JP & EN",
 		timezone: "Asia/Tokyo",
@@ -953,6 +965,12 @@ const gameData = [
 		server: "NA",
 		timezone: "America/Los_Angeles",
 		dailyReset: "01:00"
+	},
+	{
+		game: "Path To Nowhere",
+		server: "SEA",
+		timezone: "Etc/GMT-7",
+		dailyReset: "05:00"
 	},
 	{
 		game: "Pokemon Masters EX",

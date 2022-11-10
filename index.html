@@ -26,7 +26,14 @@
 			<h1>Game Time Master</h1>
 		</header>
 		<div id="outsideMenu" onclick="toggleMenu()"></div>
+		
 		<div id="menu">
+			<div id="gameFilterSettingsAll" class="menuSection">
+			<input type="checkbox" id="selectAll" checked>
+			<label class="optionName" for="selectAll">
+				Select All Games
+			</label>
+			</div>
 			<div id="gameFilterSettings" class="menuSection">
 				<h2 class="sectionHeading">Games</h2>
 				<button id="gamesMenuSection" class="sectionToggleArrow" onclick="gamesMenuSectionToggle(this)"></button>
@@ -507,6 +514,22 @@
 				<label class="optionName" for="gflProjectNeuralCloud">
 					Girls' Frontline: Project Neural Cloud
 				</label>
+				<input type="checkbox" id="nikke" onchange="toggleGameParentHide(this)" checked>
+				<label class="optionName gameParent" for="nikke">
+					<span>Goddess of Victory: NIKKE</span>
+					<button id="nikkeChildren" class="sectionToggleArrow" onclick="menuChildrenToggle(this)"></button>
+					<label for="nikkeChildren"></label>
+				</label>
+				<div class="gameChildren">
+					<input type="checkbox" id="nikkeGlobal" class="gameServerToggle" onchange="toggleGameServerHide(this, true)" checked>
+					<label class="optionName" for="nikkeGlobal">
+						Global
+					</label>
+					<input type="checkbox" id="nikkeSEA" class="gameServerToggle" onchange="toggleGameServerHide(this, true)" checked>
+					<label class="optionName" for="nikkeSEA">
+						SEA
+					</label>
+				</div>
 				<input type="checkbox" id="gbf" class="gameServerToggle" onchange="toggleGameServerHide(this)" checked>
 				<label class="optionName" for="gbf">
 					Granblue Fantasy
@@ -842,6 +865,10 @@
 				<input type="checkbox" id="paladins" class="gameServerToggle" onchange="toggleGameServerHide(this)" checked>
 				<label class="optionName" for="paladins">
 					Paladins
+				</label>
+				<input type="checkbox" id="pathToNowhere" class="gameServerToggle" onchange="toggleGameServerHide(this)" checked>
+				<label class="optionName" for="pathToNowhere">
+					Path To Nowhere
 				</label>
 				<input type="checkbox" id="pokemonMastersEX" class="gameServerToggle" onchange="toggleGameServerHide(this)" checked>
 				<label class="optionName" for="pokemonMastersEX">
@@ -1242,6 +1269,11 @@
 			<p id="currentLocalTime">Time</p>
 			<p id="currentLocalDate">Date</p>
 			<p id="currentLocalTimezone" title="Region - Timezone">Region/Timezone</p>
+			<div class="buttons" style="padding-top:15px;">
+				Sort by: 
+				<button class="selected" title="Sort all games by Name" id="sortByName" onclick="undoSortDivs();">Name</button>
+				<button class="" title="Sort all games by Time Until Reset" id="sortByTime" onclick="sortDivs();">Time Until Reset</button>
+			</div>
 		</div>
 		<div id="resultsContainer">
 			<div class="gameContainer">
@@ -3116,6 +3148,48 @@
 			<div class="gameContainer">
 				<div class="gameHeader">
 					<div class="gameIcon">
+						<img src="game-icons/Nikke.gif">
+					</div>
+					<h3>Goddess of Victory: NIKKE</h3>
+				</div>
+				<div class="gameTimes">
+					<div class="localTimes">
+						<p>Local Reset Time: </p>
+						<p>Time Until Reset: </p>
+					</div>
+					<div class="serverTimes">
+						<p>Server Reset Time: </p>
+						<p>Current Server Time: </p>
+					</div>
+				</div>
+				<div class="buttons">
+					<button title="Hide this game server" onclick="hideGameServerButton(this)">HIDE</button>
+				</div>
+			</div>
+			<div class="gameContainer">
+				<div class="gameHeader">
+					<div class="gameIcon">
+						<img src="game-icons/Nikke.gif">
+					</div>
+					<h3>Goddess of Victory: NIKKE</h3>
+				</div>
+				<div class="gameTimes">
+					<div class="localTimes">
+						<p>Local Reset Time: </p>
+						<p>Time Until Reset: </p>
+					</div>
+					<div class="serverTimes">
+						<p>Server Reset Time: </p>
+						<p>Current Server Time: </p>
+					</div>
+				</div>
+				<div class="buttons">
+					<button title="Hide this game server" onclick="hideGameServerButton(this)">HIDE</button>
+				</div>
+			</div>
+			<div class="gameContainer">
+				<div class="gameHeader">
+					<div class="gameIcon">
 						<img src="game-icons/GranblueFantasy.gif">
 					</div>
 					<h3>Granblue Fantasy</h3>
@@ -4544,6 +4618,27 @@
 			<div class="gameContainer">
 				<div class="gameHeader">
 					<div class="gameIcon">
+						<img src="game-icons/PathToNowhere.gif">
+					</div>
+					<h3>Path To Nowhere</h3>
+				</div>
+				<div class="gameTimes">
+					<div class="localTimes">
+						<p>Local Reset Time: </p>
+						<p>Time Until Reset: </p>
+					</div>
+					<div class="serverTimes">
+						<p>Server Reset Time: </p>
+						<p>Current Server Time: </p>
+					</div>
+				</div>
+				<div class="buttons">
+					<button title="Hide this game server" onclick="hideGameServerButton(this)">HIDE</button>
+				</div>
+			</div>
+			<div class="gameContainer">
+				<div class="gameHeader">
+					<div class="gameIcon">
 						<img src="game-icons/PokemonMastersEX.gif">
 					</div>
 					<h3>Pok&eacute;mon Masters EX</h3>
@@ -5949,7 +6044,7 @@
 				</div>
 			</div>
 		</div>
-
+		<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
 		<script src="game-data.js"></script>
 		<script src="script.js"></script>
 	</body>
