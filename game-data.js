@@ -539,6 +539,12 @@ var gameData = [
 		dailyReset: "05:00"
 	},
 	{
+		game: "Girls' Frontline: Project Neural Cloud",
+		server: "Global",
+		timezone: "America/Los_Angeles",
+		dailyReset: "05:00"
+	},
+	{
 		game: "Goddess of Victory: NIKKE",
 		server: "Global",
 		timezone: "Etc/GMT-8",
